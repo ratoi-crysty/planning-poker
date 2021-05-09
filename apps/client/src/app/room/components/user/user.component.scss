@@ -1,0 +1,12 @@
+@import "../../../../themes";
+
+.content {
+  &.voted {
+    nb-user ::ng-deep {
+      /*.user-name,*/
+      .user-picture {
+        color: nb-theme(text-success-color);
+      }
+    }
+  }
+}

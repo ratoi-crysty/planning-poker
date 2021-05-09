@@ -1,0 +1,40 @@
+<div *ngIf="room$ | async as room" class="content">
+  <div>
+    <div class="voting-cards">
+      <planning-poker-vote-card
+        *ngFor="let card of cards"
+        [card]="card"
+        [selected]="isSelected(card, room)"
+        [disabled]="room.show"
+        (vote)="vote($event, room)"
+      ></planning-poker-vote-card>
+    </div>
+    <div class="voted-cards">
+      <planning-poker-voted-card
+        *ngFor="let userId of usersWithVote(room)"
+        [name]="room.users[userId].name"
+        [card]="room.votes[userId]"
+      ></planning-poker-voted-card>
+    </div>
+    <div *ngIf="isOwner(room)">
+      <div *ngIf="!room.show else resetContainer">
+        <button (click)="show()" nbButton status="primary">Show</button>
+      </div>
+      <ng-template #resetContainer>
+        <button (click)="reset()" nbButton status="primary">Reset</button>
+      </ng-template>
+    </div>
+  </div>
+  <div class="users">
+    <nb-card>
+      <nb-card-header>Users</nb-card-header>
+      <nb-card-body>
+        <planning-poker-user
+          *ngFor="let userId of room.usersList"
+          [name]="room.users[userId].name"
+          [voted]="room.voted[userId]"
+        ></planning-poker-user>
+      </nb-card-body>
+    </nb-card>
+  </div>
+</div>

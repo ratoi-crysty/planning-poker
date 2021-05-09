@@ -14,6 +14,7 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
+    "strict": true,
     "paths": {
       "@planning-poker/api-interfaces": ["libs/api-interfaces/src/index.ts"]
     }

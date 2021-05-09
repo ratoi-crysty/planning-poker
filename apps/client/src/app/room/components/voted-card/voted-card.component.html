@@ -1,0 +1,25 @@
+<nb-flip-card
+  [flipped]="!!card"
+  [showToggleButton]="false"
+  class="voted-card"
+>
+  <nb-card-front>
+    <nb-card status="info">
+      <nb-card-header>
+        <div class="content">
+          <div class="name">{{name}}</div>
+        </div>
+      </nb-card-header>
+    </nb-card>
+  </nb-card-front>
+  <nb-card-back>
+    <nb-card status="success">
+      <nb-card-header>
+        <div class="content">
+          <div class="name">{{name}}</div>
+          <div class="vote-value" *ngIf="card">{{cardContent}}</div>
+        </div>
+      </nb-card-header>
+    </nb-card>
+  </nb-card-back>
+</nb-flip-card>
