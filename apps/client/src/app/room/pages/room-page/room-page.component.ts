@@ -31,7 +31,6 @@ export class RoomPageComponent {
         }),
         distinctUntilChanged(),
         switchMap((id: string): Observable<RoomModel | undefined> => {
-          console.log('Join room', id);
           return this.roomService.joinRoom(id);
         }),
         tap((room: RoomModel | undefined) => {
@@ -39,7 +38,6 @@ export class RoomPageComponent {
             return;
           }
 
-          console.log('Room was not found', room);
           this.router.navigate(['/'])
             .catch(console.error);
         }),
@@ -61,21 +59,24 @@ export class RoomPageComponent {
 
     this.roomService.vote(newCard)
       .subscribe(() => {
-        console.log('Voted');
+        // eslint-disable-next-line no-restricted-syntax
+        console.info('Voted');
       });
   }
 
   show() {
     this.roomService.show()
       .subscribe(() => {
-        console.log('Show');
+        // eslint-disable-next-line no-restricted-syntax
+        console.info('Show');
       });
   }
 
   reset() {
     this.roomService.reset()
       .subscribe(() => {
-        console.log('Reset');
+        // eslint-disable-next-line no-restricted-syntax
+        console.info('Reset');
       });
   }
 

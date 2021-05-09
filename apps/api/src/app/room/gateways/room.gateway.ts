@@ -29,7 +29,6 @@ export class RoomGateway implements OnGatewayInit {
       .subscribe((rooms: Record<string, RoomModel>) => {
         Object.entries(rooms)
           .forEach(([name, room]) => {
-            console.log('Trigger rooms');
             this.socket.to(name).emit('updated', getRoomOutput(room));
           });
       });
@@ -37,8 +36,6 @@ export class RoomGateway implements OnGatewayInit {
 
   @SubscribeMessage('create')
   create(@Req() req: AuthRequest): RoomModel {
-    console.log('Request', req.user);
-
     return getRoomOutput(this.roomService.createRoom(req.user));
   }
 
@@ -91,7 +88,6 @@ export class RoomGateway implements OnGatewayInit {
 
   @SubscribeMessage('get-voted')
   getVoted(@Req() req: AuthRequest): number | undefined {
-    console.log('Get voted', req.user.name, this.roomService.getRoomByUser(req.user)?.votes[req.user.id], this.roomService.getRoomByUser(req.user));
     return this.roomService.getRoomByUser(req.user)?.votes[req.user.id];
   }
 
