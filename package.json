@@ -2,10 +2,14 @@
   "name": "planning-poker",
   "version": "0.0.0",
   "license": "MIT",
+  "engines": {
+    "node": "12.x"
+  },
   "scripts": {
     "ng": "nx",
     "postinstall": "node ./decorate-angular-cli.js && ngcc --properties es2015 browser module main",
     "nx": "nx",
+    "start:prod": "yarn affected:build --all && node ./dist/apps/api/main.js",
     "start": "ng serve",
     "build": "ng build",
     "test": "ng test",
@@ -47,6 +51,7 @@
     "@nestjs/platform-express": "^7.0.0",
     "@nestjs/platform-socket.io": "^7.6.6",
     "@nestjs/platform-ws": "^7.6.6",
+    "@nestjs/serve-static": "^2.1.4",
     "@nestjs/websockets": "^7.6.6",
     "@nrwl/angular": "12.0.8",
     "class-transformer": "^0.3.2",
