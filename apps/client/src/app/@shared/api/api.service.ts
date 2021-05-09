@@ -113,9 +113,13 @@ export class ApiService {
 
   protected createWsConnection(token: string): Observable<SocketIOClient.Socket> {
     return new Observable<SocketIOClient.Socket>((subscriber: Subscriber<SocketIOClient.Socket>) => {
-      const socket: SocketIOClient.Socket = connect(`ws://${location.host}/api/room?jwt_bearer=${token}`, {
-        transports: ['websocket'],
-      });
+      const protocol: string = location.protocol === 'https:' ? 'wss' : 'ws';
+      const socket: SocketIOClient.Socket = connect(
+        `${protocol}://${location.host}/api/room?jwt_bearer=${token}`,
+        {
+          transports: ['websocket'],
+        },
+      );
 
       subscriber.next(socket);
 
