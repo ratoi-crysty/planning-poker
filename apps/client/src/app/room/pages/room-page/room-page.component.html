@@ -28,9 +28,9 @@
   <div class="users">
     <nb-card>
       <nb-card-header>Users</nb-card-header>
-      <nb-card-body>
+      <nb-card-body *ngIf="uniqUsers$ | async as uniqUsers">
         <planning-poker-user
-          *ngFor="let userId of room.usersList"
+          *ngFor="let userId of uniqUsers"
           [name]="room.users[userId].name"
           [voted]="room.voted[userId]"
         ></planning-poker-user>

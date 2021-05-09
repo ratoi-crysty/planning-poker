@@ -4,7 +4,14 @@ import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { NbThemeModule, NbLayoutModule, NbToastrModule } from '@nebular/theme';
+import {
+  NbThemeModule,
+  NbLayoutModule,
+  NbToastrModule,
+  NbUserModule,
+  NbContextMenuModule,
+  NbMenuModule, NbCardModule,
+} from '@nebular/theme';
 import { NbEvaIconsModule } from '@nebular/eva-icons';
 import { AppRoutingModule } from './app-routing.module';
 import { AuthModule } from './auth/auth.module';
@@ -21,6 +28,10 @@ import { AuthModule } from './auth/auth.module';
     NbEvaIconsModule,
     NbToastrModule.forRoot(),
     AppRoutingModule,
+    NbUserModule,
+    NbMenuModule.forRoot(),
+    NbContextMenuModule,
+    NbCardModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

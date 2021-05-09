@@ -1,16 +1,37 @@
 <nb-layout>
 
   <nb-layout-header fixed>
+    <div class="header">
+      <div class="user-info" *ngIf="user$ | async as user">
+        <nb-user
+          [name]="user.name"
+          [nbContextMenu]="userMenu"
+          [nbContextMenuTag]="menuTag"
+          onlyPicture
+        ></nb-user>
+      </div>
+    </div>
   <!-- Insert header here -->
   </nb-layout-header>
 
   <nb-layout-column>
-    <router-outlet *ngIf="token$ | async else login"></router-outlet>
-    
+    <router-outlet *ngIf="user$ | async else login"></router-outlet>
+
     <ng-template #login>
-      <planning-poker-login></planning-poker-login>
+      <div class="login-wrapper">
+        <nb-card>
+          <nb-card-header>
+            <div class="login-header">Login</div>
+          </nb-card-header>
+          <nb-card-body>
+            <div class="login-content">
+              <planning-poker-login></planning-poker-login>
+            </div>
+          </nb-card-body>
+        </nb-card>
+      </div>
     </ng-template>
-    
+
   </nb-layout-column>
 
   <nb-layout-footer fixed>

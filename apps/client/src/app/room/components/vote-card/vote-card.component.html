@@ -2,7 +2,7 @@
   <nb-card
     (click)="handleVote()">
     <nb-card-body>
-      <div class="card-content">{{cardValue}}</div>
+      <div class="card-content" [class.text-disabled]="disabled">{{cardValue}}</div>
     </nb-card-body>
   </nb-card>
 </div>

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { AuthService } from '../../service/auth.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { NbGlobalPhysicalPosition, NbToastrService } from '@nebular/theme';
+import { NbToastrService } from '@nebular/theme';
 
 @Component({
   selector: 'planning-poker-login',
@@ -24,15 +24,6 @@ export class LoginComponent {
     }
 
     this.authService.login(this.formGroup.controls.name.value)
-      .subscribe(
-        () => {
-          this.toastr.show('Logged in successfully', 'Login', {
-            position: NbGlobalPhysicalPosition.TOP_RIGHT,
-            destroyByClick: true,
-            duration: 5000,
-            status: 'success',
-          });
-        },
-      );
+      .subscribe();
   }
 }

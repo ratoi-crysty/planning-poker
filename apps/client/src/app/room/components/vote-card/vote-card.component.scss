@@ -1,6 +1,9 @@
-.vote-card:not(.selected) {
-  padding-top: 1rem;
+.vote-card {
+  &.selected {
+    margin-top: -1rem;
+  }
 }
+
 
 .vote-card:not(.disabled) {
   nb-card {

@@ -3,8 +3,9 @@ import { RoomService } from '../../services/room.service';
 import { Observable } from 'rxjs';
 import { RoomModel, UserSessionModel } from '@planning-poker/api-interfaces';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { distinctUntilChanged, map, switchMap, tap } from 'rxjs/operators';
+import { distinctUntilChanged, filter, map, switchMap, tap } from 'rxjs/operators';
 import { SessionStoreService } from '../../../@shared/stores/session-store.service';
+import { uniq } from 'lodash';
 
 @Component({
   selector: 'planning-poker-room-page',
@@ -14,6 +15,7 @@ import { SessionStoreService } from '../../../@shared/stores/session-store.servi
 })
 export class RoomPageComponent {
   room$: Observable<RoomModel | undefined>;
+  uniqUsers$: Observable<string[]>;
   user: UserSessionModel;
   cards: number[] = [1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, -1];
 
@@ -40,6 +42,14 @@ export class RoomPageComponent {
 
           this.router.navigate(['/'])
             .catch(console.error);
+        }),
+      );
+
+    this.uniqUsers$ = this.room$
+      .pipe(
+        filter((room: RoomModel | undefined): room is RoomModel => !!room),
+        map((room: RoomModel): string[] => {
+          return uniq(room.usersList);
         }),
       );
 
