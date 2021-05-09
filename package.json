@@ -57,6 +57,7 @@
     "class-transformer": "^0.3.2",
     "class-validator": "^0.13.1",
     "eva-icons": "^1.1.2",
+    "heroku-ssl-redirect": "^0.1.1",
     "lodash": "^4.17.21",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",

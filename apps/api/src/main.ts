@@ -7,6 +7,7 @@ import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app/app.module';
 import { IoAdapter } from '@nestjs/platform-socket.io';
+import sslRedirect from 'heroku-ssl-redirect';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -22,6 +23,8 @@ async function bootstrap() {
     exposedHeaders: '*',
   });
   app.useWebSocketAdapter(new IoAdapter(app));
+
+  app.use(sslRedirect());
 
   const port = process.env.PORT || 3333;
   await app.listen(port, () => {
