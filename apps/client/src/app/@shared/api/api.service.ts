@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, Subscriber } from 'rxjs';
-import { filter, switchMap } from 'rxjs/operators';
+import { filter, retry, switchMap } from 'rxjs/operators';
 import { SessionStoreService } from '../stores/session-store.service';
 import { connect } from 'socket.io-client';
 
@@ -126,6 +126,9 @@ export class ApiService {
       return () => {
         socket.close();
       };
-    });
+    })
+      .pipe(
+        retry(3),
+      );
   }
 }
