@@ -1,11 +1,11 @@
 import {
   ConnectedSocket,
   MessageBody,
-  OnGatewayInit,
   SubscribeMessage,
   WebSocketGateway,
-  WebSocketServer, WsException,
-  WsResponse,
+  WebSocketServer,
+  WsException,
+  WsResponse
 } from '@nestjs/websockets';
 import { Req, UseGuards } from '@nestjs/common';
 import { AuthRequest } from '../../auth/models/auth-request';
@@ -15,23 +15,15 @@ import { RoomService } from '../service/room.service';
 import { RoomJoinDto } from '../dts/room-join.dto';
 import { Socket } from 'socket.io';
 import { getRoomOutput } from '../utils/room.utils';
+import { distinctUntilChanged, map } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
 
 @UseGuards(JwtAuthGuard)
 @WebSocketGateway({ namespace: 'api/room' })
-export class RoomGateway implements OnGatewayInit {
+export class RoomGateway {
   @WebSocketServer() socket!: Socket;
 
   constructor(protected roomService: RoomService) {
-  }
-
-  afterInit(): void {
-    this.roomService.getRooms$()
-      .subscribe((rooms: Record<string, RoomModel>) => {
-        Object.entries(rooms)
-          .forEach(([name, room]) => {
-            this.socket.to(name).emit('updated', getRoomOutput(room));
-          });
-      });
   }
 
   @SubscribeMessage('create')
@@ -49,23 +41,33 @@ export class RoomGateway implements OnGatewayInit {
       if (e instanceof WsException) {
         return {
           event: 'updated',
-          data: undefined,
+          data: undefined
         };
       }
 
       throw e;
     }
 
+    const subscription: Subscription = this.roomService.getRooms$()
+      .pipe(
+        map((rooms: Record<string, RoomModel>): RoomModel => rooms[data.id]),
+        distinctUntilChanged()
+      )
+      .subscribe((room: RoomModel) => {
+        socket.emit('updated', getRoomOutput(room));
+      });
+
     socket.on('disconnect', () => {
       this.roomService.leaveRoom(data.id, req.user);
       this.socket.adapter.del(socket.id, data.id);
+      subscription.unsubscribe();
     });
 
     const room: RoomModel | undefined = this.roomService.getRoomValue(data.id);
 
     return {
       event: '0',
-      data: room && getRoomOutput(room),
+      data: room && getRoomOutput(room)
     };
   }
 
@@ -109,7 +111,7 @@ export class RoomGateway implements OnGatewayInit {
     if (!room) {
       throw new WsException({ status: 401 });
     } else if (room.owner !== req.user.id) {
-      throw new WsException({ status: 403, message: 'You are not the owner of the room' })
+      throw new WsException({ status: 403, message: 'You are not the owner of the room' });
     }
 
     return room;

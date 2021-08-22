@@ -6,7 +6,7 @@ import { SessionStoreService } from '../stores/session-store.service';
 import { connect } from 'socket.io-client';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class ApiService {
   protected connection = new BehaviorSubject<SocketIOClient.Socket | undefined>(undefined);
@@ -16,8 +16,8 @@ export class ApiService {
       .pipe(
         filter((token: string | undefined): token is string => !!token),
         switchMap((token: string): Observable<SocketIOClient.Socket | undefined> => {
-          return this.createWsConnection(token);
-        }),
+          return this.getWsConnection$(token);
+        })
       )
       .subscribe(this.connection);
   }
@@ -25,28 +25,28 @@ export class ApiService {
   get<T>(path: string, params?: Record<string, string | string[]>): Observable<T> {
     return this.http.get<T>(this.getUrl(path), {
       params,
-      headers: this.getHeaders(),
+      headers: this.getHeaders()
     });
   }
 
   post<T>(path: string, body: unknown, params?: Record<string, string | string[]>): Observable<T> {
     return this.http.post<T>(this.getUrl(path), body, {
       params,
-      headers: this.getHeaders(),
+      headers: this.getHeaders()
     });
   }
 
   put<T>(path: string, body: unknown, params?: Record<string, string | string[]>): Observable<T> {
     return this.http.put<T>(this.getUrl(path), body, {
       params,
-      headers: this.getHeaders(),
+      headers: this.getHeaders()
     });
   }
 
   delete<T>(path: string, params?: Record<string, string | string[]>): Observable<T> {
     return this.http.delete<T>(this.getUrl(path), {
       params,
-      headers: this.getHeaders(),
+      headers: this.getHeaders()
     });
   }
 
@@ -69,7 +69,7 @@ export class ApiService {
               socket.off(event, listener);
             };
           });
-        }),
+        })
       );
   }
 
@@ -81,7 +81,7 @@ export class ApiService {
         }),
         switchMap((socket): Observable<T> => {
           return this.call<T, D>(socket, event, data);
-        }),
+        })
       );
 
   }
@@ -111,24 +111,34 @@ export class ApiService {
     return `/api/${path}`;
   }
 
-  protected createWsConnection(token: string): Observable<SocketIOClient.Socket> {
+  protected getWsConnection$(token: string): Observable<SocketIOClient.Socket> {
     return new Observable<SocketIOClient.Socket>((subscriber: Subscriber<SocketIOClient.Socket>) => {
       const protocol: string = location.protocol === 'https:' ? 'wss' : 'ws';
       const socket: SocketIOClient.Socket = connect(
         `${protocol}://${location.host}/api/room?jwt_bearer=${token}`,
         {
-          transports: ['websocket'],
-        },
+          transports: ['websocket']
+        }
       );
 
       subscriber.next(socket);
 
+      const handleTermination = () => {
+        subscriber.error(new Error('Closed'));
+      };
+
+      socket.on('close', handleTermination);
+      socket.on('error', handleTermination);
+
       return () => {
+        if (socket.disconnected) {
+          return;
+        }
         socket.close();
       };
     })
       .pipe(
-        retry(3),
+        retry()
       );
   }
 }
